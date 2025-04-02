@@ -1,1 +1,6 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+
+@theme {
+  --font-title: 'Oxanium', 'sans-serif';
+  --font-sans: 'Space Grotesk', 'sans-serif';
+}
