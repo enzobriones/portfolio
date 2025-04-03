@@ -8,13 +8,12 @@ export const AboutMe = () => {
         <div className='w-full md:w-1/3'>
           <div className='rounded-full overflow-hidden h-32 w-32 sm:h-48 sm:w-48 mx-auto border-4 border-sky-100 shadow-lg'>
             <img
-              src='src/assets/images/profile.jpg'
+              src='src/assets/images/user.jpg'
               alt='Enzo Briones'
               className='w-full h-full object-cover'
             />
           </div>
         </div>
-
         <div className='w-full md:w-2/3'>
           <p className='text-gray-700 mb-4'>
             Soy un desarrollador fullstack apasionado por crear soluciones web
@@ -41,6 +40,46 @@ export const AboutMe = () => {
             <span className='px-3 py-1 bg-sky-100 text-sky-700 rounded-full text-sm font-medium'>
               Diseño de APIs
             </span>
+          </div>
+        </div>
+      </div>
+      <div className='mt-10 bg-gradient-to-r from-sky-50 to-white p-6 rounded-lg shadow-md'>
+        <h3 className='text-xl font-semibold text-gray-800 mb-4'>
+          ¿Por qué trabajar conmigo?
+        </h3>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+          <div className='bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow'>
+            <div className='text-sky-500 text-2xl mb-2'>
+              <i className='fas fa-rocket'></i>
+            </div>
+            <h4 className='font-medium text-gray-800 mb-1'>
+              Innovación Constante
+            </h4>
+            <p className='text-gray-600 text-sm'>
+              Siempre buscando soluciones creativas a problemas complejos.
+            </p>
+          </div>
+          <div className='bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow'>
+            <div className='text-sky-500 text-2xl mb-2'>
+              <i className='fas fa-code'></i>
+            </div>
+            <h4 className='font-medium text-gray-800 mb-1'>
+              Código de Calidad
+            </h4>
+            <p className='text-gray-600 text-sm'>
+              Desarrollo limpio, mantenible y bien documentado.
+            </p>
+          </div>
+          <div className='bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow'>
+            <div className='text-sky-500 text-2xl mb-2'>
+              <i className='fas fa-users'></i>
+            </div>
+            <h4 className='font-medium text-gray-800 mb-1'>
+              Colaboración Efectiva
+            </h4>
+            <p className='text-gray-600 text-sm'>
+              Comunicación clara y trabajo en equipo para alcanzar objetivos.
+            </p>
           </div>
         </div>
       </div>

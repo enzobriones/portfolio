@@ -1,66 +1,118 @@
-import { Menu } from 'lucide-react';
-import { useState } from 'react';
-import { Link } from 'react-router';
+import { useState, useEffect } from 'react';
 
 export const Navbar = () => {
+  const [activeSection, setActiveSection] = useState('inicio');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  }
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = [
+        'inicio',
+        'sobre-mi',
+        'habilidades',
+        'proyectos',
+        'contacto',
+      ];
+      
+      const scrollPosition = window.scrollY + 100; // Offset to trigger slightly before reaching section
+      
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          if (
+            scrollPosition >= offsetTop && 
+            scrollPosition < offsetTop + offsetHeight
+          ) {
+            setActiveSection(section);
+            break;
+          }
+        }
+      }
+    };
 
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  }
+    window.addEventListener('scroll', handleScroll);
+    
+    // Call once to set initial active section
+    handleScroll();
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const isActive = (section: string) => section === activeSection;
+
+  const handleNavClick = (id: string) => {
+    setActiveSection(id);
+    setIsMenuOpen(false); // Close menu after click on mobile
+  };
+
+  const navItems = [
+    { id: 'inicio', label: 'Inicio' },
+    { id: 'sobre-mi', label: 'Sobre mí' },
+    { id: 'habilidades', label: 'Habilidades' },
+    { id: 'proyectos', label: 'Proyectos' },
+    { id: 'contacto', label: 'Contacto' },
+  ];
 
   return (
-    <div className='flex flex-col items-center p-4 mb-10 bg-blue-50'>
-      {/* Dropdown Menu */}
-      <div>
-        <div className="sm:hidden">
-          <button 
-            onClick={toggleMenu} 
-            className="flex items-center p-2 text-slate-600 hover:text-slate-900"
-            aria-label="Toggle menu"
-          >
-            <span className="sr-only">Menu</span>
-            <Menu />
-          </button>
-          
-          {isMenuOpen && (
-            <div className="absolute top-16 left-0 right-0 bg-white shadow-md z-50 py-2 px-4">
-              {['Inicio', 'Sobre mí', 'Mis proyectos', 'Contacto'].map((item, index) => (
-                <Link
-                  key={index}
-                  to="/"
-                  className="block py-2 text-slate-600 hover:text-slate-900 border-b border-gray-100 last:border-0"
-                  onClick={closeMenu}
-                >
-                  {item}
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
+    <nav className='sticky top-0 z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 py-4 bg-white/80 backdrop-blur-sm shadow-sm rounded-b-lg'>
+      {/* Mobile hamburger and logo */}
+      <div className="flex justify-between items-center md:hidden">
+        <span className="font-bold text-indigo-600">Enzo Briones</span>
+        <button 
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="p-2 focus:outline-none"
+        >
+          {/* Hamburger icon */}
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            {isMenuOpen ? (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
+        </button>
       </div>
-      
-      {/* Desktop View */}
-      <div className='max-sm:hidden flex w-full items-center justify-between my-4'>
-        <img src='src/assets/images/dev-icon.svg' alt='react-logo' width={40} />
-        <div className='flex items-center space-x-6'>
-          {['Inicio', 'Sobre mí', 'Mis proyectos', 'Contacto'].map(
-            (item, index) => (
-              <Link
-                key={index}
-                to='/'
-                className='text-slate-600 relative py-2 font-medium transition-colors hover:text-slate-900 after:absolute after:w-full after:h-0.5 after:bg-blue-500 after:bottom-0 after:left-0 after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300'
+
+      {/* Mobile menu */}
+      {isMenuOpen && (
+        <ul className='flex flex-col space-y-4 mt-4 md:hidden'>
+          {navItems.map(({ id, label }) => (
+            <li key={id}>
+              <a
+                href={`#${id}`}
+                className={`block font-medium transition-colors ${
+                  isActive(id)
+                    ? 'text-indigo-600 font-semibold'
+                    : 'text-gray-800 hover:text-indigo-600'
+                }`}
+                onClick={() => handleNavClick(id)}
               >
-                {item}
-              </Link>
-            )
-          )}
-        </div>
-      </div>
-    </div>
+                {label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* Desktop menu */}
+      <ul className='hidden md:flex space-x-8 justify-center'>
+        {navItems.map(({ id, label }) => (
+          <li key={id}>
+            <a
+              href={`#${id}`}
+              className={`font-medium transition-colors ${
+                isActive(id)
+                  ? 'text-indigo-600 font-semibold'
+                  : 'text-gray-800 hover:text-indigo-600'
+              }`}
+              onClick={() => handleNavClick(id)}
+            >
+              {label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 };
