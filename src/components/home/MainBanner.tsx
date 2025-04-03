@@ -1,19 +1,61 @@
+import { motion } from "framer-motion";
+
 export const MainBanner = () => {
   return (
     <div className='flex flex-col items-center justify-center w-full mt-16 space-y-6 px-4 sm:px-6 animate-fadeIn'>
       <h1 className='font-title font-extrabold text-center text-4xl sm:text-5xl md:text-6xl text-gray-800'>
-        Hola, mi nombre es{' '}
+        {Array.from("Hola, mi nombre es ").map((letter, index) => (
+          <motion.span
+        key={index}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: index * 0.05 }}
+          >
+        {letter}
+          </motion.span>
+        ))}
         <span className='bg-gradient-to-r from-sky-500 to-blue-600 bg-clip-text text-transparent font-bold py-2 transition-colors duration-300 hover:from-blue-600 hover:to-sky-500'>
-          Enzo Briones
+          {Array.from("Enzo Briones").map((letter, index) => (
+        <motion.span
+          key={index}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: (index + "Hola, mi nombre es ".length) * 0.05 }}
+        >
+          {letter}
+        </motion.span>
+          ))}
         </span>
       </h1>
-      <p className='text-gray-700 font-semibold text-xl md:text-2xl'>
-        Desarrollador Fullstack
-      </p>
-      <p className='text-gray-600 text-center max-w-xl text-lg leading-relaxed'>
+      <motion.p 
+        className='text-gray-700 font-semibold text-xl md:text-2xl'
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: "Hola, mi nombre es Enzo Briones".length * 0.05 }}
+      >
+        {Array.from("Desarrollador Fullstack").map((letter, index) => (
+          <motion.span
+        key={index}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2, delay: (index + "Hola, mi nombre es Enzo Briones".length) * 0.05 + 0.3 }}
+          >
+        {letter}
+          </motion.span>
+        ))}
+      </motion.p>
+      <motion.p 
+        className='text-gray-600 text-center max-w-xl text-lg leading-relaxed'
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ 
+          duration: 0.5, 
+          delay: (Array.from("Hola, mi nombre es Enzo BrionesDesarrollador Fullstack").length * 0.05) + 0.5 
+        }}
+      >
         Diseño y desarrollo aplicaciones web modernas con enfoque en
         experiencias de usuario excepcionales
-      </p>
+      </motion.p>
       <div className='flex items-center space-x-8 my-4'>
         <div className='relative group'>
           <img
