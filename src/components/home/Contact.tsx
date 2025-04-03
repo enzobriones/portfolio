@@ -1,9 +1,70 @@
+import { useState, FormEvent, ChangeEvent } from 'react';
+import emailjs from '@emailjs/browser';
+
 export const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: '',
+  });
+  const [status, setStatus] = useState<
+    'idle' | 'sending' | 'success' | 'error'
+  >('idle');
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setStatus('sending');
+
+    // Configura estos valores según tu cuenta de EmailJS
+    const serviceId = import.meta.env.VITE_SERVICE_ID;
+    const templateId = import.meta.env.VITE_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_PUBLIC_KEY;
+
+    try {
+      await emailjs.send(
+        serviceId,
+        templateId,
+        {
+          from_name: formData.name,
+          reply_to: formData.email,
+          message: formData.message,
+        },
+        publicKey
+      );
+
+      setStatus('success');
+      // Limpiar el formulario después del envío exitoso
+      setFormData({
+        name: '',
+        email: '',
+        message: '',
+      });
+
+      // Restablecer el estado después de 5 segundos
+      setTimeout(() => setStatus('idle'), 5000);
+    } catch (error) {
+      console.error('Error al enviar el email:', error);
+      setStatus('error');
+      // Restablecer el estado después de 5 segundos
+      setTimeout(() => setStatus('idle'), 5000);
+    }
+  };
+
   return (
     <div className='w-full max-w-4xl mx-auto px-4 sm:px-6 py-12'>
       <h2 className='text-3xl font-bold text-center mb-8'>Contacto</h2>
       <div className='bg-white shadow-md rounded-lg p-6'>
-        <form className='space-y-4'>
+        <form className='space-y-4' onSubmit={handleSubmit}>
           <div>
             <label
               htmlFor='name'
@@ -14,8 +75,11 @@ export const Contact = () => {
             <input
               type='text'
               id='name'
+              value={formData.name}
+              onChange={handleChange}
               className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'
               placeholder='Tu nombre'
+              required
             />
           </div>
           <div>
@@ -28,8 +92,11 @@ export const Contact = () => {
             <input
               type='email'
               id='email'
+              value={formData.email}
+              onChange={handleChange}
               className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'
               placeholder='tu@email.com'
+              required
             />
           </div>
           <div>
@@ -42,16 +109,36 @@ export const Contact = () => {
             <textarea
               id='message'
               rows={4}
+              value={formData.message}
+              onChange={handleChange}
               className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'
               placeholder='Tu mensaje...'
+              required
             ></textarea>
           </div>
           <button
             type='submit'
-            className='w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors'
+            disabled={status === 'sending'}
+            className={`w-full py-2 px-4 rounded-md transition-colors ${
+              status === 'sending'
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+            }`}
           >
-            Enviar mensaje
+            {status === 'sending' ? 'Enviando...' : 'Enviar mensaje'}
           </button>
+
+          {status === 'success' && (
+            <div className='p-3 bg-green-100 text-green-700 rounded-md'>
+              ¡Mensaje enviado con éxito! Te responderemos pronto.
+            </div>
+          )}
+
+          {status === 'error' && (
+            <div className='p-3 bg-red-100 text-red-700 rounded-md'>
+              Hubo un error al enviar el mensaje. Por favor intenta nuevamente.
+            </div>
+          )}
         </form>
         <div className='mt-8 flex justify-center space-x-6'>
           <a href='#' className='text-gray-500 hover:text-indigo-600'>
@@ -102,35 +189,64 @@ export const Contact = () => {
           </a>
         </div>
       </div>
-      <div className="mt-12 text-center">
-        <h3 className="text-xl font-semibold mb-4">¿Por qué contactarme?</h3>
-        <div className="grid md:grid-cols-3 gap-6 mt-6">
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-            <div className="text-indigo-500 mb-2">
-              <svg className="h-8 w-8 mx-auto" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+      <div className='mt-12 text-center'>
+        <h3 className='text-xl font-semibold mb-4'>¿Por qué contactarme?</h3>
+        <div className='grid md:grid-cols-3 gap-6 mt-6'>
+          <div className='bg-gray-50 p-4 rounded-lg shadow-sm'>
+            <div className='text-indigo-500 mb-2'>
+              <svg
+                className='h-8 w-8 mx-auto'
+                fill='currentColor'
+                viewBox='0 0 20 20'
+                xmlns='http://www.w3.org/2000/svg'
+              >
+                <path
+                  fillRule='evenodd'
+                  d='M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z'
+                  clipRule='evenodd'
+                />
               </svg>
             </div>
-            <h4 className="font-medium">Respuesta Rápida</h4>
-            <p className="text-gray-600 text-sm mt-1">Respondo a todas las consultas en menos de 24 horas.</p>
+            <h4 className='font-medium'>Respuesta Rápida</h4>
+            <p className='text-gray-600 text-sm mt-1'>
+              Respondo a todas las consultas en menos de 24 horas.
+            </p>
           </div>
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-            <div className="text-indigo-500 mb-2">
-              <svg className="h-8 w-8 mx-auto" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+          <div className='bg-gray-50 p-4 rounded-lg shadow-sm'>
+            <div className='text-indigo-500 mb-2'>
+              <svg
+                className='h-8 w-8 mx-auto'
+                fill='currentColor'
+                viewBox='0 0 20 20'
+                xmlns='http://www.w3.org/2000/svg'
+              >
+                <path d='M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z' />
               </svg>
             </div>
-            <h4 className="font-medium">Colaboración</h4>
-            <p className="text-gray-600 text-sm mt-1">Siempre abierto a nuevas oportunidades de colaboración.</p>
+            <h4 className='font-medium'>Colaboración</h4>
+            <p className='text-gray-600 text-sm mt-1'>
+              Siempre abierto a nuevas oportunidades de colaboración.
+            </p>
           </div>
-          <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-            <div className="text-indigo-500 mb-2">
-              <svg className="h-8 w-8 mx-auto" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                <path fillRule="evenodd" d="M6.672 1.911a1 1 0 10-1.932.518l.259.966a1 1 0 001.932-.518l-.26-.966zM2.429 4.74a1 1 0 10-.517 1.932l.966.259a1 1 0 00.517-1.932l-.966-.26zm8.814-.569a1 1 0 00-1.415-1.414l-.707.707a1 1 0 101.415 1.415l.707-.708zm-7.071 7.072l.707-.707A1 1 0 003.465 9.12l-.708.707a1 1 0 001.415 1.415zm3.2-5.171a1 1 0 00-1.3 1.3l4 10a1 1 0 001.823.075l1.38-2.759 3.018 3.02a1 1 0 001.414-1.415l-3.019-3.02 2.76-1.379a1 1 0 00-.076-1.822l-10-4z" clipRule="evenodd" />
+          <div className='bg-gray-50 p-4 rounded-lg shadow-sm'>
+            <div className='text-indigo-500 mb-2'>
+              <svg
+                className='h-8 w-8 mx-auto'
+                fill='currentColor'
+                viewBox='0 0 20 20'
+                xmlns='http://www.w3.org/2000/svg'
+              >
+                <path
+                  fillRule='evenodd'
+                  d='M6.672 1.911a1 1 0 10-1.932.518l.259.966a1 1 0 001.932-.518l-.26-.966zM2.429 4.74a1 1 0 10-.517 1.932l.966.259a1 1 0 00.517-1.932l-.966-.26zm8.814-.569a1 1 0 00-1.415-1.414l-.707.707a1 1 0 101.415 1.415l.707-.708zm-7.071 7.072l.707-.707A1 1 0 003.465 9.12l-.708.707a1 1 0 001.415 1.415zm3.2-5.171a1 1 0 00-1.3 1.3l4 10a1 1 0 001.823.075l1.38-2.759 3.018 3.02a1 1 0 001.414-1.415l-3.019-3.02 2.76-1.379a1 1 0 00-.076-1.822l-10-4z'
+                  clipRule='evenodd'
+                />
               </svg>
             </div>
-            <h4 className="font-medium">Soluciones Creativas</h4>
-            <p className="text-gray-600 text-sm mt-1">Aporto ideas innovadoras a cada proyecto.</p>
+            <h4 className='font-medium'>Soluciones Creativas</h4>
+            <p className='text-gray-600 text-sm mt-1'>
+              Aporto ideas innovadoras a cada proyecto.
+            </p>
           </div>
         </div>
       </div>
