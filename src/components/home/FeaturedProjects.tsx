@@ -14,7 +14,7 @@ export const FeaturedProjects = () => {
           description='Página estática desarrollada con Vue.js, TailwindCSS y TypeScript'
           techs={[
             { title: 'Vue', color: 'green' },
-            { title: 'TypeScript', color: 'blue' },
+            { title: 'TypeScript', color: 'sky' },
           ]}
         />
         {/* Project Card 2 */}
@@ -23,8 +23,8 @@ export const FeaturedProjects = () => {
           title='Landing Page Centro Médico Nahuelbuta'
           description='Página estática desarrollada con React, TailwindCSS y TypeScript'
           techs={[
-            { title: 'React', color: 'blue' },
-            { title: 'TypeScript', color: 'blue' },
+            { title: 'React', color: 'sky' },
+            { title: 'TypeScript', color: 'sky' },
           ]}
         />
       </div>

@@ -5,16 +5,8 @@ export const AboutMe = () => {
         Sobre Mí
       </h2>
       <div className='flex flex-col md:flex-row gap-8 items-center'>
-        <div className='w-full md:w-1/3'>
-          <div className='rounded-full overflow-hidden h-32 w-32 sm:h-48 sm:w-48 mx-auto border-4 border-sky-100 shadow-lg'>
-            <img
-              src='src/assets/images/user.jpg'
-              alt='Enzo Briones'
-              className='w-full h-full object-cover'
-            />
-          </div>
-        </div>
-        <div className='w-full md:w-2/3'>
+
+        <div className='w-full'>
           <p className='text-gray-700 mb-4'>
             Soy un desarrollador fullstack apasionado por crear soluciones web
             escalables y eficientes. Con experiencia en React y NestJS, disfruto
